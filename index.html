@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SadTerrorKING Live YouTube Stats</title>
+    <meta name="description" content="Live subscriber count for SadTerrorKING YouTube channel - Real-time stats and analytics">
+    <meta property="og:title" content="SadTerrorKING Live YouTube Stats">
+    <meta property="og:description" content="Track live subscriber count and channel stats for SadTerrorKING">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sadterrorking-subcounter.mcboss.top">
+    <meta property="og:image" content="https://yt3.googleusercontent.com/channel_icon_placeholder" id="meta-image">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SadTerrorKING Live YouTube Stats">
+    <meta name="twitter:description" content="Track live subscriber count and channel stats for SadTerrorKING">
+    <link rel="icon" type="image/x-icon" href="https://yt3.googleusercontent.com/channel_icon_placeholder" id="favicon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-primary: #7c3aed;
+            --accent-secondary: #a855f7;
+            --border: #475569;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .bg-dark-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .text-dark-primary {
+            color: var(--text-primary);
+        }
+
+        .text-dark-secondary {
+            color: var(--text-secondary);
+        }
+
+        .text-dark-muted {
+            color: var(--text-muted);
+        }
+
+        .stats-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .milestone-bar {
+            position: relative;
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .milestone-progress {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            border-radius: 6px;
+            transition: width 1s ease;
+        }
+        .milestone-marker {
+            position: absolute;
+            width: 4px;
+            height: 20px;
+            background: var(--text-muted);
+            top: -4px;
+            transform: translateX(-2px);
+        }
+        .milestone-label {
+            position: absolute;
+            font-size: 10px;
+            transform: translateX(-50%);
+            margin-top: 12px;
+            color: var(--text-muted);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .live-indicator {
+            animation: pulse 2s infinite;
+        }
+        .count-up {
+            animation: greenHighlight 1s;
+        }
+        .count-down {
+            animation: redHighlight 1s;
+        }
+        @keyframes greenHighlight {
+            0% { background-color: rgba(16, 185, 129, 0.2); }
+            100% { background-color: transparent; }
+        }
+        @keyframes redHighlight {
+            0% { background-color: rgba(239, 68, 68, 0.2); }
+            100% { background-color: transparent; }
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .theme-toggle {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+        .nav-bg {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        .video-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+        .video-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen" data-theme="dark">
+    <nav class="nav-bg text-dark-primary shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fab fa-youtube text-red-500 text-2xl"></i>
+                <span class="font-bold text-xl">SadTerrorKING Stats</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="theme-toggle px-3 py-1 rounded-lg">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <div class="flex items-center px-3 py-1 bg-red-600 rounded-full">
+                    <span class="animate-ping h-2 w-2 rounded-full bg-white mr-2"></span>
+                    <span class="text-sm font-medium text-white">LIVE</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Channel Info Section -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row items-center gap-6 p-6 bg-dark-card rounded-xl shadow-lg">
+                <div id="channel-avatar" class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-purple-600">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNGM0YzRjIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjZmZmZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5Mb2FkaW5nLi4uPC90ZXh0Pgo8L3N2Zz4K" alt="Channel Avatar" class="w-full h-full object-cover" id="channel-thumbnail">
+                </div>
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-2xl md:text-3xl font-bold mb-2 text-dark-primary" id="channel-name">Loading channel info...</h1>
+                    <p class="text-dark-secondary mb-2" id="channel-description">Loading description...</p>
+                    <div class="flex flex-wrap gap-4 mt-3 justify-center md:justify-start">
+                        <div class="flex items-center text-dark-muted">
+                            <i class="far fa-calendar-alt mr-2"></i>
+                            <span id="channel-created">Joined: Loading...</span>
+                        </div>
+                        <div class="flex items-center text-dark-muted">
+                            <i class="fas fa-globe mr-2"></i>
+                            <span id="channel-country">Country: Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Subscribers Card -->
+            <div class="stats-card p-6 rounded-xl shadow-md flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-semibold text-dark-secondary">Subscribers</h2>
+                    <div class="live-indicator flex items-center">
+                        <span class="h-2 w-2 bg-green-500 rounded-full mr-1"></span>
+                        <span class="text-xs text-green-500 font-medium">LIVE</span>
+                    </div>
+                </div>
+                <div class="flex items-baseline">
+                    <span id="subscriber-count" class="text-4xl font-bold gradient-text">0</span>
+                    <span id="subscriber-change" class="ml-2 text-sm"></span>
+                </div>
+                <div class="text-xs text-dark-muted mt-1">Last updated: <span id="sub-update-time">Just now</span></div>
+            </div>
+
+            <!-- Views Card -->
+            <div class="stats-card p-6 rounded-xl shadow-md flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-semibold text-dark-secondary">Total Views</h2>
+                    <div class="text-xs text-dark-muted">Updated live</div>
+                </div>
+                <div class="flex items-baseline">
+                    <span id="view-count" class="text-4xl font-bold gradient-text">0</span>
+                    <span id="view-change" class="ml-2 text-sm"></span>
+                </div>
+                <div class="text-xs text-dark-muted mt-1">Last updated: <span id="view-update-time">Just now</span></div>
+            </div>
+
+            <!-- Videos Card -->
+            <div class="stats-card p-6 rounded-xl shadow-md flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-semibold text-dark-secondary">Total Videos</h2>
+                    <div class="text-xs text-dark-muted">Updated live</div>
+                </div>
+                <div class="flex items-baseline">
+                    <span id="video-count" class="text-4xl font-bold gradient-text">0</span>
+                    <span id="video-change" class="ml-2 text-sm"></span>
+                </div>
+                <div class="text-xs text-dark-muted mt-1">Last updated: <span id="video-update-time">Just now</span></div>
+            </div>
+
+            <!-- Average Views Card -->
+            <div class="stats-card p-6 rounded-xl shadow-md flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-semibold text-dark-secondary">Avg. Views Per Video</h2>
+                    <div class="text-xs text-dark-muted">Calculated</div>
+                </div>
+                <div class="flex items-baseline">
+                    <span id="avg-views" class="text-4xl font-bold gradient-text">0</span>
+                </div>
+                <div class="text-xs text-dark-muted mt-1">Based on public videos</div>
+            </div>
+        </div>
+
+        <!-- Subscriber Growth Chart -->
+        <div class="bg-dark-card p-6 rounded-xl shadow-md mb-8">
+            <h2 class="text-xl font-semibold text-dark-secondary mb-4">Live Subscriber Growth</h2>
+            <div class="h-64">
+                <canvas id="subscriber-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Milestone Progress -->
+        <div class="bg-dark-card p-6 rounded-xl shadow-md mb-8">
+            <h2 class="text-xl font-semibold text-dark-secondary mb-4">Milestone Progress</h2>
+            <div id="milestone-container" class="relative">
+                <div class="milestone-bar">
+                    <div id="milestone-progress" class="milestone-progress" style="width: 0%"></div>
+                </div>
+                <div id="milestone-markers"></div>
+            </div>
+            <div class="mt-4">
+                <p class="text-center text-dark-primary">
+                    <span id="current-milestone-text">Loading milestone data...</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Top Videos Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Top 5 Videos -->
+            <div class="bg-dark-card p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-semibold text-dark-secondary mb-4 flex items-center">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>
+                    Top 5 Videos
+                </h2>
+                <div id="top-videos" class="space-y-3">
+                    <div class="animate-pulse">
+                        <div class="bg-gray-600 h-16 rounded-lg mb-2"></div>
+                        <div class="bg-gray-600 h-3 rounded w-3/4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Most Viewed Videos -->
+            <div class="bg-dark-card p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-semibold text-dark-secondary mb-4 flex items-center">
+                    <i class="fas fa-eye text-blue-500 mr-2"></i>
+                    Most Viewed
+                </h2>
+                <div id="most-viewed-videos" class="space-y-3">
+                    <div class="animate-pulse">
+                        <div class="bg-gray-600 h-16 rounded-lg mb-2"></div>
+                        <div class="bg-gray-600 h-3 rounded w-3/4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Most Liked Videos -->
+            <div class="bg-dark-card p-6 rounded-xl shadow-md">
+                <h2 class="text-xl font-semibold text-dark-secondary mb-4 flex items-center">
+                    <i class="fas fa-heart text-red-500 mr-2"></i>
+                    Most Liked
+                </h2>
+                <div id="most-liked-videos" class="space-y-3">
+                    <div class="animate-pulse">
+                        <div class="bg-gray-600 h-16 rounded-lg mb-2"></div>
+                        <div class="bg-gray-600 h-3 rounded w-3/4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Videos -->
+        <div class="bg-dark-card p-6 rounded-xl shadow-md mb-8">
+            <h2 class="text-xl font-semibold text-dark-secondary mb-4">Recent Videos</h2>
+            <div id="recent-videos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="animate-pulse">
+                    <div class="bg-gray-600 h-40 rounded-lg mb-2"></div>
+                    <div class="bg-gray-600 h-4 rounded w-3/4 mb-2"></div>
+                    <div class="bg-gray-600 h-3 rounded w-1/2"></div>
+                </div>
+                <div class="animate-pulse">
+                    <div class="bg-gray-600 h-40 rounded-lg mb-2"></div>
+                    <div class="bg-gray-600 h-4 rounded w-3/4 mb-2"></div>
+                    <div class="bg-gray-600 h-3 rounded w-1/2"></div>
+                </div>
+                <div class="animate-pulse">
+                    <div class="bg-gray-600 h-40 rounded-lg mb-2"></div>
+                    <div class="bg-gray-600 h-4 rounded w-3/4 mb-2"></div>
+                    <div class="bg-gray-600 h-3 rounded w-1/2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Sharing -->
+        <div class="bg-dark-card p-6 rounded-xl shadow-md mb-8">
+            <h2 class="text-xl font-semibold text-dark-secondary mb-4">Connect & Share</h2>
+            <div class="flex flex-wrap gap-3 mb-4">
+                <button class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg flex items-center transition-colors" id="discord-link">
+                    <i class="fab fa-discord mr-2"></i>
+                    <span>Join Discord</span>
+                </button>
+                <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors" id="yt-channel-link">
+                    <i class="fab fa-youtube mr-2"></i>
+                    <span>YouTube Channel</span>
+                </button>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors" id="share-stats">
+                    <i class="fas fa-share mr-2"></i>
+                    <span>Share Stats</span>
+                </button>
+            </div>
+            <div class="text-sm text-dark-muted">
+                <p>Join our Discord community: <a href="https://discord.gg/UReY3csXdG" class="text-purple-400 hover:text-purple-300 transition-colors" target="_blank">https://discord.gg/UReY3csXdG</a></p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="nav-bg text-dark-primary py-6 border-t border-gray-600">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p>© 2025 SadTerrorKING Live Stats | Real-time data from YouTube API</p>
+                <p class="text-sm text-dark-muted mt-2">Not affiliated with YouTube. Made by <a href="https://mcboss.top/">McBoss.top</a> <a href="https://discord.gg/W4ePrmkNjk"><i class="fab fa-discord mr-2"></i>MalFriends</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Constants
+        const API_KEY = 'AIzaSyC2sZV6YwpwfRmC_khr2Rf-P2HD6cnPtpM';
+        const CHANNEL_ID = 'SadTerrorKING';
+        const REFRESH_INTERVAL = 30000; // 30 seconds
+        const CHART_MAX_POINTS = 30;
+
+        // Global variables
+        let subscriberData = {
+            labels: [],
+            counts: []
+        };
+        let lastStats = {
+            subscribers: 0,
+            views: 0,
+            videos: 0
+        };
+        let chart;
+        let channelId = '';
+        let isDarkMode = true;
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (isDarkMode) {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-moon';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-sun';
+            }
+            
+            // Update chart colors
+            if (chart) {
+                updateChartTheme();
+            }
+            
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            isDarkMode = savedTheme === 'dark';
+            toggleTheme();
+            // Call again to set the correct state
+            if ((isDarkMode && savedTheme === 'light') || (!isDarkMode && savedTheme === 'dark')) {
+                toggleTheme();
+            }
+        }
+
+        // Update chart theme colors
+        function updateChartTheme() {
+            const textColor = isDarkMode ? '#f1f5f9' : '#0f172a';
+            const gridColor = isDarkMode ? '#475569' : '#e2e8f0';
+            
+            chart.options.plugins.legend.labels.color = textColor;
+            chart.options.scales.x.ticks.color = textColor;
+            chart.options.scales.y.ticks.color = textColor;
+            chart.options.scales.x.grid.color = gridColor;
+            chart.options.scales.y.grid.color = gridColor;
+            chart.update();
+        }
+
+        // Initialize the application
+        async function init() {
+            try {
+                loadTheme();
+                
+                // Set up event listeners
+                document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+                document.getElementById('discord-link').addEventListener('click', () => {
+                    window.open('https://discord.gg/UReY3csXdG', '_blank');
+                });
+                document.getElementById('share-stats').addEventListener('click', shareStats);
+
+                // Get channel ID and load data
+                channelId = await getChannelIdFromUsername('SadTerrorKING');
+                if (!channelId) {
+                    showError("Could not find channel for SadTerrorKING");
+                    return;
+                }
+
+                initializeChart();
+                await loadChannelData();
+                await loadVideoData();
+                
+                // Set up polling for real-time updates
+                setInterval(async () => {
+                    await loadChannelData();
+                }, REFRESH_INTERVAL);
+
+                // Update meta tags with channel data
+                updateMetaTags();
+
+                document.getElementById('yt-channel-link').addEventListener('click', () => {
+                    window.open(`https://www.youtube.com/@${CHANNEL_ID}`, '_blank');
+                });
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showError("Failed to initialize. Please refresh and try again.");
+            }
+        }
+
+        // Get channel ID from username
+        async function getChannelIdFromUsername(username) {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${username}&type=channel&key=${API_KEY}`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    return data.items[0].snippet.channelId;
+                }
+                throw new Error('Channel not found');
+            } catch (error) {
+                console.error('Error getting channel ID:', error);
+                return null;
+            }
+        }
+
+        // Initialize the chart
+        function initializeChart() {
+            const ctx = document.getElementById('subscriber-chart').getContext('2d');
+            const textColor = isDarkMode ? '#f1f5f9' : '#0f172a';
+            const gridColor = isDarkMode ? '#475569' : '#e2e8f0';
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Subscribers',
+                        data: [],
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                },
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 0,
+                                maxTicksLimit: 10,
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Load channel data
+        async function loadChannelData() {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&id=${channelId}&key=${API_KEY}`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const channel = data.items[0];
+                    updateChannelInfo(channel);
+                    updateStatistics(channel);
+                    updateSubscriberChart(channel.statistics.subscriberCount);
+                    updateMilestones(channel.statistics.subscriberCount);
+                    updateMetaTags(channel);
+                } else {
+                    showError("No channel data found");
+                }
+            } catch (error) {
+                console.error('Error loading channel data:', error);
+                showError("Failed to load channel data. API might be rate limited.");
+            }
+        }
+
+        // Update channel info
+        function updateChannelInfo(channel) {
+            const thumbnailUrl = channel.snippet.thumbnails.high?.url || channel.snippet.thumbnails.default?.url;
+            const thumbnail = document.getElementById('channel-thumbnail');
+            thumbnail.src = thumbnailUrl;
+            
+            // Update favicon and meta images
+            document.getElementById('favicon').href = thumbnailUrl;
+            document.getElementById('meta-image').content = thumbnailUrl;
+            
+            document.getElementById('channel-name').textContent = channel.snippet.title;
+            document.getElementById('channel-description').textContent = channel.snippet.description || 'No description available';
+            
+            const publishedAt = new Date(channel.snippet.publishedAt);
+            const publishDate = publishedAt.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('channel-created').textContent = `Joined: ${publishDate}`;
+            document.getElementById('channel-country').textContent = channel.snippet.country 
+                ? `Country: ${channel.snippet.country}` 
+                : 'Country: Not specified';
+        }
+
+        // Update statistics with real-time tracking
+        function updateStatistics(channel) {
+            const stats = channel.statistics;
+            const currentStats = {
+                subscribers: parseInt(stats.subscriberCount, 10),
+                views: parseInt(stats.viewCount, 10),
+                videos: parseInt(stats.videoCount, 10)
+            };
+            
+            // Update subscriber count
+            updateStatCounter('subscriber-count', 'subscriber-change', currentStats.subscribers, lastStats.subscribers);
+            updateStatCounter('view-count', 'view-change', currentStats.views, lastStats.views);
+            updateStatCounter('video-count', 'video-change', currentStats.videos, lastStats.videos);
+            
+            // Calculate average views per video
+            const avgViews = Math.round(currentStats.views / currentStats.videos);
+            document.getElementById('avg-views').textContent = formatNumber(avgViews);
+            
+            // Update timestamps
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('sub-update-time').textContent = timeString;
+            document.getElementById('view-update-time').textContent = timeString;
+            document.getElementById('video-update-time').textContent = timeString;
+            
+            // Store the stats for comparison
+            lastStats = currentStats;
+        }
+
+        // Update individual stat counter with change indicator
+        function updateStatCounter(countElementId, changeElementId, currentValue, lastValue) {
+            const countElement = document.getElementById(countElementId);
+            const changeElement = document.getElementById(changeElementId);
+            
+            if (lastValue > 0 && lastValue !== currentValue) {
+                const diff = currentValue - lastValue;
+                const changeClass = diff > 0 ? 'count-up' : 'count-down';
+                const changeSign = diff > 0 ? '+' : '';
+                const changeColor = diff > 0 ? 'text-green-400' : 'text-red-400';
+                const changeHTML = `<span class="${changeColor}">${changeSign}${formatNumber(diff)}</span>`;
+                
+                countElement.classList.add(changeClass);
+                changeElement.innerHTML = changeHTML;
+                
+                setTimeout(() => {
+                    countElement.classList.remove(changeClass);
+                }, 1000);
+            }
+            
+            countElement.textContent = formatNumber(currentValue);
+        }
+
+        // Update subscriber chart
+        function updateSubscriberChart(subscriberCount) {
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            subscriberData.labels.push(timeLabel);
+            subscriberData.counts.push(subscriberCount);
+            
+            if (subscriberData.labels.length > CHART_MAX_POINTS) {
+                subscriberData.labels.shift();
+                subscriberData.counts.shift();
+            }
+            
+            chart.data.labels = subscriberData.labels;
+            chart.data.datasets[0].data = subscriberData.counts;
+            chart.update();
+        }
+
+        // Update milestones
+        function updateMilestones(subscriberCount) {
+            const currentCount = parseInt(subscriberCount, 10);
+            const milestones = [1000, 5000, 10000, 50000, 100000, 500000, 1000000];
+            
+            let nextMilestone = milestones.find(m => m > currentCount) || milestones[milestones.length - 1] * 10;
+            let prevMilestone = milestones.filter(m => m <= currentCount).pop() || 0;
+            
+            if (prevMilestone === milestones[milestones.length - 1]) {
+                nextMilestone = prevMilestone * 10;
+            }
+            
+            const progressRange = nextMilestone - prevMilestone;
+            const currentProgress = currentCount - prevMilestone;
+            const progressPercentage = (currentProgress / progressRange) * 100;
+            
+            document.getElementById('milestone-progress').style.width = `${progressPercentage}%`;
+            
+            const remainingToNextMilestone = nextMilestone - currentCount;
+            document.getElementById('current-milestone-text').innerHTML = `
+                <span class="font-bold">${formatNumber(currentCount)}</span> subscribers out of 
+                <span class="font-bold">${formatNumber(nextMilestone)}</span> for next milestone!
+                <br><span class="text-sm text-dark-muted">Just ${formatNumber(remainingToNextMilestone)} more to go!</span>
+            `;
+            
+            const markersContainer = document.getElementById('milestone-markers');
+            markersContainer.innerHTML = '';
+            
+            const relevantMilestones = milestones.filter(m => m > prevMilestone && m <= nextMilestone * 2);
+            relevantMilestones.forEach(milestone => {
+                const position = ((milestone - prevMilestone) / progressRange) * 100;
+                if (position <= 100) {
+                    const marker = document.createElement('div');
+                    marker.className = 'milestone-marker';
+                    marker.style.left = `${position}%`;
+                    
+                    const label = document.createElement('div');
+                    label.className = 'milestone-label';
+                    label.style.left = `${position}%`;
+                    label.textContent = formatCompactNumber(milestone);
+                    
+                    markersContainer.appendChild(marker);
+                    markersContainer.appendChild(label);
+                }
+            });
+        }
+
+        // Load video data for top lists
+        async function loadVideoData() {
+            try {
+                await Promise.all([
+                    loadRecentVideos(),
+                    loadTopVideos(),
+                    loadMostViewedVideos(),
+                    loadMostLikedVideos()
+                ]);
+            } catch (error) {
+                console.error('Error loading video data:', error);
+            }
+        }
+
+        // Load recent videos
+        async function loadRecentVideos() {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=date&type=video&maxResults=6&key=${API_KEY}`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const videosContainer = document.getElementById('recent-videos');
+                    videosContainer.innerHTML = '';
+                    
+                    data.items.forEach(item => {
+                        const videoId = item.id.videoId;
+                        const title = item.snippet.title;
+                        const thumbnail = item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url;
+                        const publishedAt = new Date(item.snippet.publishedAt);
+                        const timeAgo = timeElapsed(publishedAt);
+                        
+                        videosContainer.innerHTML += `
+                            <div class="video-card rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
+                                <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="block">
+                                    <img src="${thumbnail}" alt="${title}" class="w-full h-40 object-cover">
+                                    <div class="p-3">
+                                        <h3 class="font-semibold text-dark-primary line-clamp-2 mb-1">${title}</h3>
+                                        <p class="text-xs text-dark-muted">${timeAgo}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                    });
+                } else {
+                    document.getElementById('recent-videos').innerHTML = '<p class="text-center text-dark-muted">No recent videos found</p>';
+                }
+            } catch (error) {
+                console.error('Error loading recent videos:', error);
+            }
+        }
+
+        // Load top videos (by view count)
+        async function loadTopVideos() {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=viewCount&type=video&maxResults=5&key=${API_KEY}`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const videoIds = data.items.map(item => item.id.videoId).join(',');
+                    const statsResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds}&key=${API_KEY}`);
+                    const statsData = await statsResponse.json();
+                    
+                    const container = document.getElementById('top-videos');
+                    container.innerHTML = '';
+                    
+                    statsData.items.forEach((video, index) => {
+                        const views = formatNumber(video.statistics.viewCount);
+                        const title = video.snippet.title;
+                        const videoId = video.id;
+                        
+                        container.innerHTML += `
+                            <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-opacity-10 hover:bg-white transition-colors">
+                                <span class="text-lg font-bold text-dark-muted">#${index + 1}</span>
+                                <div class="flex-1">
+                                    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="block">
+                                        <h4 class="font-medium text-dark-primary text-sm line-clamp-2">${title}</h4>
+                                        <p class="text-xs text-dark-muted">${views} views</p>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading top videos:', error);
+                document.getElementById('top-videos').innerHTML = '<p class="text-center text-dark-muted">Failed to load</p>';
+            }
+        }
+
+        // Load most viewed videos
+        async function loadMostViewedVideos() {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=viewCount&type=video&maxResults=5&key=${API_KEY}`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const videoIds = data.items.map(item => item.id.videoId).join(',');
+                    const statsResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds}&key=${API_KEY}`);
+                    const statsData = await statsResponse.json();
+                    
+                    const container = document.getElementById('most-viewed-videos');
+                    container.innerHTML = '';
+                    
+                    // Sort by view count
+                    const sortedVideos = statsData.items.sort((a, b) => parseInt(b.statistics.viewCount) - parseInt(a.statistics.viewCount));
+                    
+                    sortedVideos.forEach((video, index) => {
+                        const views = formatNumber(video.statistics.viewCount);
+                        const title = video.snippet.title;
+                        const videoId = video.id;
+                        
+                        container.innerHTML += `
+                            <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-opacity-10 hover:bg-white transition-colors">
+                                <span class="text-lg font-bold text-blue-400">#${index + 1}</span>
+                                <div class="flex-1">
+                                    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="block">
+                                        <h4 class="font-medium text-dark-primary text-sm line-clamp-2">${title}</h4>
+                                        <p class="text-xs text-dark-muted">${views} views</p>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading most viewed videos:', error);
+                document.getElementById('most-viewed-videos').innerHTML = '<p class="text-center text-dark-muted">Failed to load</p>';
+            }
+        }
+
+        // Load most liked videos
+        async function loadMostLikedVideos() {
+            try {
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&order=relevance&type=video&maxResults=20&key=${API_KEY}`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const videoIds = data.items.map(item => item.id.videoId).join(',');
+                    const statsResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${videoIds}&key=${API_KEY}`);
+                    const statsData = await statsResponse.json();
+                    
+                    const container = document.getElementById('most-liked-videos');
+                    container.innerHTML = '';
+                    
+                    // Sort by like count
+                    const sortedVideos = statsData.items.sort((a, b) => parseInt(b.statistics.likeCount || 0) - parseInt(a.statistics.likeCount || 0));
+                    
+                    sortedVideos.slice(0, 5).forEach((video, index) => {
+                        const likes = formatNumber(video.statistics.likeCount || 0);
+                        const title = video.snippet.title;
+                        const videoId = video.id;
+                        
+                        container.innerHTML += `
+                            <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-opacity-10 hover:bg-white transition-colors">
+                                <span class="text-lg font-bold text-red-400">#${index + 1}</span>
+                                <div class="flex-1">
+                                    <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank" class="block">
+                                        <h4 class="font-medium text-dark-primary text-sm line-clamp-2">${title}</h4>
+                                        <p class="text-xs text-dark-muted">${likes} likes</p>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading most liked videos:', error);
+                document.getElementById('most-liked-videos').innerHTML = '<p class="text-center text-dark-muted">Failed to load</p>';
+            }
+        }
+
+        // Update meta tags with channel data
+        function updateMetaTags(channel) {
+            if (channel) {
+                const subscriberCount = formatNumber(channel.statistics.subscriberCount);
+                const title = `${channel.snippet.title} Live Stats - ${subscriberCount} Subscribers`;
+                const description = `Live subscriber count and real-time YouTube analytics for ${channel.snippet.title}. Currently at ${subscriberCount} subscribers!`;
+                
+                document.title = title;
+                document.querySelector('meta[name="description"]').content = description;
+                document.querySelector('meta[property="og:title"]').content = title;
+                document.querySelector('meta[property="og:description"]').content = description;
+                document.querySelector('meta[name="twitter:title"]').content = title;
+                document.querySelector('meta[name="twitter:description"]').content = description;
+            }
+        }
+
+        // Share stats functionality
+        function shareStats() {
+            const subscriberCount = document.getElementById('subscriber-count').textContent;
+            const channelName = document.getElementById('channel-name').textContent;
+            const shareText = `🔥 ${channelName} just hit ${subscriberCount} subscribers! Track live stats at: ${window.location.href}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SadTerrorKING Live YouTube Stats',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    // Show notification
+                    alert('Stats copied to clipboard!');
+                });
+            }
+        }
+
+        // Helper function to format large numbers
+        function formatNumber(num) {
+            return new Intl.NumberFormat().format(num);
+        }
+
+        // Helper function to format numbers in compact form
+        function formatCompactNumber(num) {
+            if (num >= 1000000) {
+                return `${(num / 1000000).toFixed(1)}M`;
+            } else if (num >= 1000) {
+                return `${(num / 1000).toFixed(1)}K`;
+            }
+            return num.toString();
+        }
+
+        // Helper function to calculate time elapsed
+        function timeElapsed(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) {
+                return Math.floor(interval) + " years ago";
+            }
+            
+            interval = seconds / 2592000;
+            if (interval > 1) {
+                return Math.floor(interval) + " months ago";
+            }
+            
+            interval = seconds / 86400;
+            if (interval > 1) {
+                return Math.floor(interval) + " days ago";
+            }
+            
+            interval = seconds / 3600;
+            if (interval > 1) {
+                return Math.floor(interval) + " hours ago";
+            }
+            
+            interval = seconds / 60;
+            if (interval > 1) {
+                return Math.floor(interval) + " minutes ago";
+            }
+            
+            return Math.floor(seconds) + " seconds ago";
+        }
+
+        // Show error message
+        function showError(message) {
+            console.error(message);
+            // You could implement a toast notification here
+        }
+
+        // Initialize the application when the page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
